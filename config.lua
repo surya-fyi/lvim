@@ -11,7 +11,7 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save.enabled = false
-lvim.colorscheme = "lunar"
+lvim.colorscheme = "github_dark_default"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
@@ -208,7 +208,7 @@ require("telescope").setup {
   }
 }
 
-lvim.builtin.telescope.defaults.layout_strategy = 'horizontal'
+lvim.builtin.telescope.defaults.layout_strategy = 'vertical'
 lvim.builtin.telescope.pickers = {
   find_files = {
     layout_config = {
@@ -238,6 +238,17 @@ lvim.builtin.telescope.pickers = {
 
 lvim.keys.normal_mode["<C-o>"] = ":SymbolsOutline<CR>"
 lvim.keys.normal_mode["<Space>lh"] = ":ClangdSwitchSourceHeader<CR>"
+
+local cmp_nvim_lsp = require "cmp_nvim_lsp"
+
+require("lspconfig").clangd.setup {
+  on_attach = on_attach,
+  capabilities = cmp_nvim_lsp.default_capabilities(),
+  cmd = {
+    "clangd",
+    "--offset-encoding=utf-16",
+  },
+}
 
 -- install cppdbg with :MasonInstall codelldb
 -- configure nvim-dap (cppdbg)
@@ -329,16 +340,14 @@ end
 
 vim.diagnostic.config({ virtual_text = false })
 vim.diagnostic.config({ underline = false })
+vim.diagnostic.config({ signs = false })
 
 -- vim.api.nvim_set_keymap('n', '<leader>tt', ':call v:lua.toggle_diagnostics()<CR>',  {noremap = true, silent = true})
 
 
 -- Additional Plugins
 lvim.plugins = {
-  -- {
-  --   "folke/trouble.nvim",
-  --   cmd = "TroubleToggle",
-  -- },
+  { "lukas-reineke/indent-blankline.nvim", enabled = false, main = "ibl", opts = {} },
   {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
