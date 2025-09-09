@@ -125,13 +125,15 @@ lvim.builtin.treesitter.highlight.enable = true
 
 -- -- you can set a custom on_attach function that will be used for all the language servers
 -- -- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
--- lvim.lsp.on_attach_callback = function(client, bufnr)
---   local function buf_set_option(...)
---     vim.api.nvim_buf_set_option(bufnr, ...)
---   end
---   --Enable completion triggered by <c-x><c-o>
---   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
--- end
+local function on_attach(client, bufnr)
+  local opts = { buffer = bufnr, noremap = true, silent = true }
+
+  -- ✅ Override built-in gd/gD with LSP
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)     -- Go to Definition
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)    -- Go to Declaration
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts) -- Go to Implementation
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)     -- Find References
+end
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 -- local formatters = require "lvim.lsp.null-ls.formatters"
@@ -247,6 +249,8 @@ require("lspconfig").clangd.setup {
   cmd = {
     "clangd",
     "--offset-encoding=utf-16",
+    '--background-index',
+    '--compile-commands-dir=build'
   },
 }
 
@@ -440,7 +444,25 @@ lvim.plugins = {
 
       vim.cmd('colorscheme github_dark')
     end,
-  }
+  },
+  {
+  "rmagatti/goto-preview",
+  config = function()
+  require('goto-preview').setup {
+        width = 120; -- Width of the floating window
+        height = 25; -- Height of the floating window
+        default_mappings = true; -- Bind default mappings
+        debug = false; -- Print debug information
+        opacity = nil; -- 0-100 opacity level of the floating window where 100 is fully transparent.
+        post_open_hook = nil -- A function taking two arguments, a buffer and a window to be ran as a hook.
+        -- You can use "default_mappings = true" setup option
+        -- Or explicitly set keybindings
+        -- vim.cmd("nnoremap gpd <cmd>lua require('goto-preview').goto_preview_definition()<CR>")
+        -- vim.cmd("nnoremap gpi <cmd>lua require('goto-preview').goto_preview_implementation()<CR>")
+        -- vim.cmd("nnoremap gP <cmd>lua require('goto-preview').close_all_win()<CR>")
+    }
+  end
+  },
 }
 
 -- Below config is required to prevent copilot overriding Tab with a suggestion

@@ -1,0 +1,23 @@
+# .clangd
+If:
+  PathMatch: .*
+---
+CompileFlags:
+  Add: [
+    -x, c++,
+    -std=c++17,
+    -fsycl,                          # ← Tell clangd to enable SYCL mode
+    -I, /localdisk/surya/cutlass-sycl/include,
+    -I, /localdisk/surya/cutlass-sycl/examples/common,
+    -I, /localdisk/surya/cutlass-sycl/tools/util/include,
+    --expt-relaxed-constexpr
+  ]
+  # Override compiler for clangd's parser (not build)
+  Compiler: clang++                 # ← Use clang++ for LSP only
+
+Diagnostics:
+  UnusedIncludes: None
+  MissingIncludes: None
+
+Index:
+  Background: Build
